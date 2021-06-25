@@ -1,4 +1,4 @@
-package com.example.springbatch.application.listener;
+package com.example.springbatch.application.job.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,7 @@ public class ContextRefreshedEventListener implements ApplicationListener<Contex
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        log.info("Stop running jobs.");
         for (String jobName: jobExplorer.getJobNames()) {
             Set<JobExecution> runningJobExecutions = jobExplorer.findRunningJobExecutions(jobName);
 
@@ -37,7 +38,9 @@ public class ContextRefreshedEventListener implements ApplicationListener<Contex
                     }
                 }
                 jobRepository.update(jobExecution);
+                log.info("Updated job execution status: {}", jobExecution.getJobId());
             }
         }
+        log.info("Stop running jobs.");
     }
 }
